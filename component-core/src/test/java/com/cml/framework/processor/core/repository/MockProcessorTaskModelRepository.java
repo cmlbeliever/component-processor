@@ -10,8 +10,8 @@ public class MockProcessorTaskModelRepository implements ProcessorTaskModelRepos
 
     private ConcurrentHashMap<String, ProcessorTaskDomainModel> storage = new ConcurrentHashMap<>();
 
-    public ProcessorTaskDomainModel find(ProcessorType processorType, String outBizId, String requestId) {
-        return storage.get(key(processorType.type(), outBizId, requestId));
+    public ProcessorTaskDomainModel find(String processorType, String outBizId, String requestId) {
+        return storage.get(key(processorType, outBizId, requestId));
     }
 
     private String key(String processorType, String outBizId, String requestId) {
@@ -30,11 +30,4 @@ public class MockProcessorTaskModelRepository implements ProcessorTaskModelRepos
         this.storage.put(key(taskDomainModel), taskDomainModel);
     }
 
-    public ProcessorTaskDomainModel findById(Long processorId) {
-        return storage.values()
-                .stream()
-                .filter(t -> t.getId().equals(processorId.toString()))
-                .findFirst()
-                .orElse(null);
-    }
 }

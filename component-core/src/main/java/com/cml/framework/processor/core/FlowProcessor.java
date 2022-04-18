@@ -16,7 +16,7 @@ public interface FlowProcessor {
      *
      * @return
      */
-    ProcessorType processorType();
+    String processorType();
 
     /**
      * 执行业务流程,任务不存在会创新一个新的，任务类型+业务id+请求id唯一

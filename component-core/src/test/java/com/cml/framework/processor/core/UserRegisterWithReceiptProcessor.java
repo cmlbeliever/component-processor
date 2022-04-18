@@ -13,8 +13,8 @@ import com.cml.framework.processor.core.impl.TaskDrivenFlowProcessor;
 public class UserRegisterWithReceiptProcessor extends TaskDrivenFlowProcessor {
 
     @Override
-    public ProcessorType processorType() {
-        return ProcessorTypeEnums.USER_REGISTER2;
+    public String processorType() {
+        return ProcessorTypeEnums.USER_REGISTER2.type();
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cml.framework.processor.core.*;
 import com.cml.framework.processor.core.enums.FlowProcessorExtraKeys;
 import com.cml.framework.processor.core.enums.ProcessorStatus;
+import com.cml.framework.processor.core.ex.RequestValidatelException;
 import com.cml.framework.processor.core.flow.FlowTaskType;
 import com.cml.framework.processor.core.model.ProcessorReceipt;
 import com.cml.framework.processor.core.model.ProcessorTaskDomainModel;
@@ -12,6 +13,7 @@ import com.cml.framework.processor.core.repository.ProcessorTaskModelRepository;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -31,6 +33,8 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
     @Override
     public ProcessResult process(ProcessorRequest request) {
 
+        validateRequest(request);
+
         // 组装上下文
         ProcessorTaskDomainModel taskDomainModel = buildTaskDomainModel(request);
 
@@ -46,10 +50,24 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
         return execute(request, taskDomainModel, processorContext -> doProcess(request, taskDomainModel, processorContext));
     }
 
+    private void validateRequest(ProcessorRequest request) {
+        if (request.getOutBizId() == null) {
+            throw new RequestValidatelException("outBizId非空");
+        }
+        if (request.getProcessorType() == null) {
+            throw new RequestValidatelException("processorType非空");
+        }
+        if (request.getRequestId() == null) {
+            throw new RequestValidatelException("requestId非空");
+        }
+    }
+
     @Override
     public ProcessResult receipt(ProcessorReceipt processorReceipt) {
 
-        ProcessorTaskDomainModel taskDomainModel = processorTaskModelRepository.findById(processorReceipt.getProcessorId());
+        validateReceiptRequest(processorReceipt);
+
+        ProcessorTaskDomainModel taskDomainModel = processorTaskModelRepository.find(processorReceipt.getProcessorType(), processorReceipt.getOutBizId(), processorReceipt.getRequestId());
 
         if (null == taskDomainModel) {
             throw new IllegalArgumentException("任务不存在");
@@ -63,6 +81,18 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
         ProcessorRequest request = JSON.parseObject(requestStr, ProcessorRequest.class);
 
         return execute(request, taskDomainModel, context -> doReceipt(request, taskDomainModel, context, processorReceipt));
+    }
+
+    private void validateReceiptRequest(ProcessorReceipt processorReceipt) {
+        if (processorReceipt.getOutBizId() == null) {
+            throw new RequestValidatelException("outBizId非空");
+        }
+        if (processorReceipt.getProcessorType() == null) {
+            throw new RequestValidatelException("processorType非空");
+        }
+        if (processorReceipt.getRequestId() == null) {
+            throw new RequestValidatelException("requestId非空");
+        }
     }
 
     protected abstract ProcessResult doReceipt(ProcessorRequest request, ProcessorTaskDomainModel taskDomainModel, ProcessorContext processorContext, ProcessorReceipt<T> receipt);
@@ -163,9 +193,10 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
 
         if (null == taskDomainModel) {
             taskDomainModel = ProcessorTaskDomainModel.builder()
+                    .id(UUID.randomUUID().toString())//TODO 更换算法
                     .requestId(request.getRequestId())
                     .createdAt(new Date())
-                    .processorTaskType(this.processorType().type())
+                    .processorTaskType(this.processorType())
                     .status(ProcessorStatus.PROCESSING)
                     .retryAt(new Date())
                     .retryTimes(0)
@@ -173,11 +204,9 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
                     .updatedAt(new Date())
                     .extra(new HashMap<>())
                     .build();
-            taskDomainModel.putExtra(FlowProcessorExtraKeys.REQUEST.getKey(), JSON.toJSONString(request));
+            taskDomainModel.putExtra(FlowProcessorExtraKeys.REQUEST.getKey(), JSON.toJSONString(request, SerializerFeature.WriteClassName, SerializerFeature.WriteEnumUsingName));
             processorTaskModelRepository.save(taskDomainModel);
         }
-
-        System.out.println("-----buildTaskDomainModel taskmodel 获取成功------" + taskDomainModel);
 
         return taskDomainModel;
     }

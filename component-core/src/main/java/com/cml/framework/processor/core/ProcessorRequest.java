@@ -14,6 +14,6 @@ public class ProcessorRequest {
 
     private String outBizId;
 
-    private ProcessorType processorType;
+    private String processorType;
 
 }

@@ -1,5 +1,6 @@
 package com.cml.framework.processor.core.model;
 
+import com.cml.framework.processor.core.ProcessorType;
 import lombok.Data;
 
 /**
@@ -13,7 +14,13 @@ public class ProcessorReceipt<T> {
     /**
      * 任务id
      */
-    private Long processorId;
+    private String processorId;
+
+    private String processorType;
+
+    private String outBizId;
+
+    private String requestId;
 
     private T data;
 

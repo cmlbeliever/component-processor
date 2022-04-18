@@ -51,9 +51,8 @@ public class UserRegisterProcessorTest2 {
     public void testCommon() {
         ProcessorRequest processorRequest = new ProcessorRequest();
         processorRequest.setRequestId(UUID.randomUUID().toString());
-        processorRequest.setProcessorType(ProcessorTypeEnums.USER_REGISTER);
+        processorRequest.setProcessorType(ProcessorTypeEnums.USER_REGISTER.type());
         processorRequest.setOutBizId("userId1");
-
 
         ProcessResult process = processorContainer.take(processorRequest.getProcessorType()).process(processorRequest);
         System.out.println(JSON.toJSONString(process));
@@ -67,16 +66,19 @@ public class UserRegisterProcessorTest2 {
         ProcessorRequest processorRequest = new ProcessorRequest();
         processorRequest.setRequestId(UUID.randomUUID().toString());
         processorRequest.setOutBizId("userId1");
-        processorRequest.setProcessorType(ProcessorTypeEnums.USER_REGISTER2);
+        processorRequest.setProcessorType(ProcessorTypeEnums.USER_REGISTER2.type());
 
         FlowProcessor flowProcessor = processorContainer.take(processorRequest.getProcessorType());
 
         ProcessResult process = flowProcessor.process(processorRequest);
-        System.out.println(JSON.toJSONString(process));
+        System.out.println("---阶段1执行完成--->" + JSON.toJSONString(process));
 
+        System.out.println("\n\n\n------------开始回执处理-----------\n\n\n");
         ProcessorReceipt processorReceipt = new ProcessorReceipt();
         processorReceipt.setData("结果xx");
-        processorReceipt.setProcessorId(11L);
+        processorReceipt.setOutBizId(processorRequest.getOutBizId());
+        processorReceipt.setProcessorType(processorRequest.getProcessorType());
+        processorReceipt.setRequestId(processorRequest.getRequestId());
         process = flowProcessor.receipt(processorReceipt);
         System.out.println("receipt:" + JSON.toJSONString(process));
 

@@ -15,7 +15,7 @@ public interface ProcessorTaskModelRepository {
      * @param requestId
      * @return
      */
-    ProcessorTaskDomainModel find(ProcessorType processorType, String outBizId, String requestId);
+    ProcessorTaskDomainModel find(String processorType, String outBizId, String requestId);
 
     /**
      * 保存任务
@@ -30,12 +30,4 @@ public interface ProcessorTaskModelRepository {
      * @param taskDomainModel
      */
     void modify(ProcessorTaskDomainModel taskDomainModel);
-
-    /**
-     * 根据任务id获取数据
-     *
-     * @param processorId
-     * @return
-     */
-    ProcessorTaskDomainModel findById(Long processorId);
 }

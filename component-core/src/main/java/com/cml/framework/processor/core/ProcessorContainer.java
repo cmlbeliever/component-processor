@@ -9,10 +9,10 @@ public class ProcessorContainer {
     private ConcurrentHashMap<String, FlowProcessor> flowProcessorHolder = new ConcurrentHashMap<>();
 
     public void register(FlowProcessor processor) {
-        flowProcessorHolder.putIfAbsent(processor.processorType().type(), processor);
+        flowProcessorHolder.putIfAbsent(processor.processorType(), processor);
     }
 
-    public FlowProcessor take(ProcessorType processorType) {
-        return this.flowProcessorHolder.get(processorType.type());
+    public FlowProcessor take(String processorType) {
+        return this.flowProcessorHolder.get(processorType);
     }
 }
