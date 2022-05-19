@@ -11,6 +11,8 @@ import com.cml.framework.processor.core.model.ProcessorReceipt;
 import com.cml.framework.processor.core.model.ProcessorTaskDomainModel;
 import com.cml.framework.processor.core.repository.ProcessorTaskModelRepository;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -25,6 +27,10 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
 
+    /**
+     * 默认重试延迟时间,单位 s
+     */
+    private static final long DEFAULT_RETRY_DELAY_TIME_IN_SECONDS = 10;
     /**
      * spring 环境替换
      */
@@ -152,7 +158,7 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
             case RETRY:
             case PROCESSING:
             case INIT:
-                taskDomainModel.setRetryAt(new Date());//TODO 添加时间
+                taskDomainModel.setRetryAt(takeNextRetryTime(taskDomainModel, result));//TODO 添加时间
                 taskDomainModel.setRetryTimes(taskDomainModel.getRetryTimes() + 1);
                 break;
         }
@@ -163,6 +169,18 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
             taskDomainModel.putExtra(FlowProcessorExtraKeys.EX.getKey(), ex.getMessage());
         }
         processorTaskModelRepository.modify(taskDomainModel);
+    }
+
+    /**
+     * 获取下次执行时间，默认10s
+     *
+     * @param taskDomainModel
+     * @param result
+     * @return
+     */
+    private Date takeNextRetryTime(ProcessorTaskDomainModel taskDomainModel, ProcessResult result) {
+        LocalDateTime nextDateTime = LocalDateTime.now().plusSeconds(DEFAULT_RETRY_DELAY_TIME_IN_SECONDS);
+        return Date.from(nextDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
 

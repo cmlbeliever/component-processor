@@ -1,6 +1,7 @@
 package com.cml.framework.processor.core;
 
 import com.cml.framework.processor.core.flow.FlowTaskType;
+import lombok.Data;
 
 /**
  * 流程上下文
@@ -9,6 +10,7 @@ import com.cml.framework.processor.core.flow.FlowTaskType;
  * @Description
  * @createTime 2021年10月17日 20:43:00
  */
+@Data
 public class FlowContext {
     /**
      * 流程类型
@@ -20,29 +22,8 @@ public class FlowContext {
      */
     private String currentFlow;
 
+    /**
+     * 当前任务
+     */
     private FlowTaskType currentTask;
-
-    public ProcessorType getProcessorType() {
-        return processorType;
-    }
-
-    public void setProcessorType(ProcessorType processorType) {
-        this.processorType = processorType;
-    }
-
-    public String getCurrentFlow() {
-        return currentFlow;
-    }
-
-    public void setCurrentFlow(String currentFlow) {
-        this.currentFlow = currentFlow;
-    }
-
-    public FlowTaskType getCurrentTask() {
-        return currentTask;
-    }
-
-    public void setCurrentTask(FlowTaskType currentTask) {
-        this.currentTask = currentTask;
-    }
 }
