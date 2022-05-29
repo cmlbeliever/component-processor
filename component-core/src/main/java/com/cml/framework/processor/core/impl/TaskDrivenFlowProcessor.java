@@ -151,5 +151,7 @@ public abstract class TaskDrivenFlowProcessor extends AbstractFlowProcessor {
         throw new IllegalArgumentException("task不能为空");
     }
 
-
+    public FlowTaskHolder getFlowTaskHolder() {
+        return flowTaskHolder;
+    }
 }

@@ -6,12 +6,14 @@ import com.cml.framework.processor.core.ProcessorRequest;
 import com.cml.framework.processor.core.flow.FlowTask;
 import com.cml.framework.processor.core.flow.FlowTaskType;
 import com.cml.framework.processor.sample.flowtask.enums.FlowTaskEnums;
+import org.springframework.stereotype.Component;
 
 /**
  * @author
  * @Description
  * @createTime 2021年10月17日 22:25:00
  */
+@Component
 public class Step4FlowTask implements FlowTask {
     @Override
     public FlowTaskType taskType() {

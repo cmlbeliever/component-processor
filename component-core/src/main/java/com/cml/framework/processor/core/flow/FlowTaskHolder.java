@@ -14,6 +14,10 @@ public class FlowTaskHolder {
         flowTaskHolder.put(type, flowTask);
     }
 
+    public void register(FlowTask flowTask){
+        flowTaskHolder.put(flowTask.taskType(),flowTask);
+    }
+
     public FlowTask take(FlowTaskType type){
         return flowTaskHolder.get(type);
     }
