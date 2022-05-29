@@ -8,6 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProcessorContainer {
     private ConcurrentHashMap<String, FlowProcessor> flowProcessorHolder = new ConcurrentHashMap<>();
 
+    /**
+     * 注册处理器上下文
+     *
+     * @param processor
+     */
     public void register(FlowProcessor processor) {
         flowProcessorHolder.putIfAbsent(processor.processorType(), processor);
     }

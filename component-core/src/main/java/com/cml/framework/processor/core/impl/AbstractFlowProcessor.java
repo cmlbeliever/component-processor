@@ -10,6 +10,7 @@ import com.cml.framework.processor.core.flow.FlowTaskType;
 import com.cml.framework.processor.core.model.ProcessorReceipt;
 import com.cml.framework.processor.core.model.ProcessorTaskDomainModel;
 import com.cml.framework.processor.core.repository.ProcessorTaskModelRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -25,6 +26,7 @@ import java.util.function.Supplier;
  * @Description
  * @createTime 2021年10月17日 20:49:00
  */
+@Slf4j
 public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
 
     /**
@@ -73,7 +75,7 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
 
         validateReceiptRequest(processorReceipt);
 
-        ProcessorTaskDomainModel taskDomainModel = processorTaskModelRepository.find(processorReceipt.getProcessorType(), processorReceipt.getOutBizId(), processorReceipt.getRequestId());
+        ProcessorTaskDomainModel taskDomainModel = processorTaskModelRepository.find(processorReceipt.getProcessorType(), processorReceipt.getRequestId());
 
         if (null == taskDomainModel) {
             throw new IllegalArgumentException("任务不存在");
@@ -90,9 +92,6 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
     }
 
     private void validateReceiptRequest(ProcessorReceipt processorReceipt) {
-        if (processorReceipt.getOutBizId() == null) {
-            throw new RequestValidatelException("outBizId非空");
-        }
         if (processorReceipt.getProcessorType() == null) {
             throw new RequestValidatelException("processorType非空");
         }
@@ -127,15 +126,12 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
     }
 
     protected void releaseLock(ProcessorTaskDomainModel taskDomainModel) {
-        //TODO 任务类型+流水号 唯一
-        System.out.println("releaseLock: " + taskDomainModel.getProcessorTaskType() + taskDomainModel.getRequestId());
+        log.info("releaseLock processorType={} requestId={} 默认不处理", taskDomainModel.getProcessorTaskType(), taskDomainModel.getRequestId());
     }
 
     protected void tryLock(ProcessorTaskDomainModel taskDomainModel) {
-        //TODO 任务类型+流水号 唯一
-        System.out.println("lock:" + taskDomainModel.getProcessorTaskType() + taskDomainModel.getRequestId());
+        log.info("tryLock processorType={} requestId={} 默认不处理", taskDomainModel.getProcessorTaskType(), taskDomainModel.getRequestId());
     }
-
 
     protected abstract FlowTaskType[] flowTasks();
 
@@ -207,15 +203,14 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
      */
     protected ProcessorTaskDomainModel buildTaskDomainModel(ProcessorRequest request) {
 
-        ProcessorTaskDomainModel taskDomainModel = processorTaskModelRepository.find(this.processorType(), request.getOutBizId(), request.getRequestId());
+        ProcessorTaskDomainModel taskDomainModel = processorTaskModelRepository.find(this.processorType(), request.getRequestId());
 
         if (null == taskDomainModel) {
             taskDomainModel = ProcessorTaskDomainModel.builder()
-                    .id(UUID.randomUUID().toString())//TODO 更换算法
                     .requestId(request.getRequestId())
                     .createdAt(new Date())
                     .processorTaskType(this.processorType())
-                    .status(ProcessorStatus.PROCESSING)
+                    .status(ProcessorStatus.INIT)
                     .retryAt(new Date())
                     .retryTimes(0)
                     .outBizId(request.getOutBizId())

@@ -11,11 +11,10 @@ public interface ProcessorTaskModelRepository {
 
     /**
      * @param processorType
-     * @param outBizId
      * @param requestId
      * @return
      */
-    ProcessorTaskDomainModel find(String processorType, String outBizId, String requestId);
+    ProcessorTaskDomainModel find(String processorType, String requestId);
 
     /**
      * 保存任务

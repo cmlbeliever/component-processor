@@ -23,6 +23,7 @@ import java.util.Optional;
  * @Description
  * @createTime 2021年10月17日 21:33:00
  */
+@Slf4j
 public abstract class TaskDrivenFlowProcessor extends AbstractFlowProcessor {
 
     @Setter
@@ -52,7 +53,7 @@ public abstract class TaskDrivenFlowProcessor extends AbstractFlowProcessor {
             result = handleFlowException(e);
         }
 
-        System.out.println("task receipt 执行结果：" + flowTaskType.type() + ":" + JSON.toJSONString(result));
+        log.info("<<<task={} receipt 执行结果：{}", flowTaskType.type(), JSON.toJSONString(result));
 
         if (result.isSuccess()) {
             boolean hasNextFlow = currentFlowIndex < flowTasks.length - 1;
@@ -107,7 +108,7 @@ public abstract class TaskDrivenFlowProcessor extends AbstractFlowProcessor {
                 flowTaskResult = handleFlowException(e);
             }
 
-            System.out.println("task 执行结果：" + flowTaskType.type() + ":" + JSON.toJSONString(flowTaskResult));
+            log.info("task={} 执行结果：{}", flowTaskType.type(), JSON.toJSONString(flowTaskResult));
 
             //失败处理
             if (!flowTaskResult.isSuccess() || flowTaskResult.isWaitReceipt()) {

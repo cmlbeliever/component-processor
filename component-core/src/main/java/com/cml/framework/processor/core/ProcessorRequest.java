@@ -11,7 +11,7 @@ import lombok.Data;
 public class ProcessorRequest {
 
     /**
-     * 请求id
+     * 请求id processorType+requestId=唯一一条请求
      */
     private String requestId;
 

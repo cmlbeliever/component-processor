@@ -6,16 +6,11 @@ import lombok.Data;
  * 回执数据请求
  *
  * @author
- * @Description
+ * @Description processorType+requestId = 需要同创建任务时的一样，根据这两个参数获取到对应的任务
  * @createTime 2021年10月17日 20:44:00
  */
 @Data
 public class ProcessorReceipt<T> {
-
-    /**
-     * 任务id
-     */
-    private String processorId;
 
     /**
      * 任务类型
@@ -23,14 +18,14 @@ public class ProcessorReceipt<T> {
     private String processorType;
 
     /**
-     * 业务id
-     */
-    private String outBizId;
-
-    /**
      * 请求id
      */
     private String requestId;
+
+    /**
+     * 业务id
+     */
+    private String outBizId;
 
     /**
      * 回执数据
