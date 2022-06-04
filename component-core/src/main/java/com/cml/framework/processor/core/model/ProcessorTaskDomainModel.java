@@ -23,7 +23,7 @@ public class ProcessorTaskDomainModel {
     /**
      * 任务id
      */
-    private String id;
+    private Long id;
 
     /**
      * 请求id，processorTaskType+outBizId+requestId=唯一

@@ -115,6 +115,7 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
             //上下文处理
             result = function.apply(processorContext);
         } catch (Exception e) {
+            log.error("",e);
             ex = e;
             throw e;
         } finally {
@@ -217,8 +218,9 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
                     .updatedAt(new Date())
                     .extra(new HashMap<>())
                     .build();
-            taskDomainModel.putExtra(FlowProcessorExtraKeys.REQUEST.getKey(), JSON.toJSONString(request, SerializerFeature.WriteClassName, SerializerFeature.WriteEnumUsingName));
+            taskDomainModel.putExtra(FlowProcessorExtraKeys.REQUEST.getKey(), JSON.toJSONString(request));
             processorTaskModelRepository.save(taskDomainModel);
+            return processorTaskModelRepository.find(this.processorType(), request.getRequestId());
         }
 
         return taskDomainModel;

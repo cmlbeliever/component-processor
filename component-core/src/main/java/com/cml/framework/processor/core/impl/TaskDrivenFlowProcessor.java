@@ -43,7 +43,7 @@ public abstract class TaskDrivenFlowProcessor extends AbstractFlowProcessor {
         int currentFlowIndex = indexOfCurrentFlow(flowTasks, currentTask);
         FlowTaskType flowTaskType = flowTasks[currentFlowIndex];
 
-        FlowTask flowTask = Optional.ofNullable(flowTaskHolder.take(flowTaskType)).orElseThrow(() -> new IllegalArgumentException("flowTask 不存在"));
+        FlowTask flowTask = Optional.ofNullable(getFlowTaskHolder().take(flowTaskType)).orElseThrow(() -> new IllegalArgumentException("flowTask 不存在"));
 
         ProcessResult result;
         try {
@@ -92,7 +92,7 @@ public abstract class TaskDrivenFlowProcessor extends AbstractFlowProcessor {
 
             FlowTaskType flowTaskType = flowTasks[i];
 
-            FlowTask flowTask = Optional.ofNullable(flowTaskHolder.take(flowTaskType)).orElseThrow(() -> new IllegalArgumentException("flowTask 不存在"));
+            FlowTask flowTask = Optional.ofNullable(getFlowTaskHolder().take(flowTaskType)).orElseThrow(() -> new IllegalArgumentException("flowTask 不存在"));
 
             //更新当前节点到DB 还可以优化
             processorModel.setCurrentFlow(flowTaskType.type());

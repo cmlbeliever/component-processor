@@ -1,4 +1,4 @@
-package com.cml.framework.processor.sample.repository;
+package com.cml.framework.processor.sample.storage.mapper;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Entity()
-@Table(name = "t_processor_task")
+@Table(name = "t_processor_task",uniqueConstraints = @UniqueConstraint(name = "uidx_task_type_request_id",columnNames = {"task_type","request_id"}))
 public class ProcessorTaskModelDO implements Serializable {
 
     @Id
@@ -45,7 +45,7 @@ public class ProcessorTaskModelDO implements Serializable {
     @Column(name = "current_flow")
     private String currentFlow;
 
-    @Column(name = "extra")
+    @Column(name = "extra",length = 4096)
     private String extra;
 
     @Column(name = "retry_at")

@@ -1,18 +1,20 @@
 spring:
   jpa:
     show-sql: true
-    hibernate:
-      database-platform: org.hibernate.dialect.H2Dialect
-      ddl-auto: update
+#    hibernate:
+#      database-platform: org.hibernate.dialect.H2Dialect
+#      ddl-auto: always
   datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:file:./testDb2
-    username: sa
+#    driverClassName: org.h2.Driver
+#    url: jdbc:h2:file:./testDb2;MODE=MySQL
+    driverClassName: org.hsqldb.jdbcDriver
+    url: jdbc:hsqldb:mem://localhost/blogdb;shutdown=true
+    username: hsp
     initialization-mode: ALWAYS
     password:
     ##数据初始化设置
     #进行该配置后，每次启动程序，程序都会运行resources/db/schema.sql文件，对数据库的结构进行操作。
-    schema: classpath:schema/init.sql
+#    schema: classpath:schema/init.sql
     #进行该配置后，每次启动程序，程序都会运行resources/db/data.sql文件，对数据库的数据操作。
 #    data: classpath:db/data.sql
     ##h2 web console设置
