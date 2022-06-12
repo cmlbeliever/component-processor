@@ -25,7 +25,9 @@ public class UserRegisterProcessor extends DefaultFlowProcessor {
     protected ProcessorContext buildContext(ProcessorRequest request) {
         UserRegisterRequest userRegisterRequest = (UserRegisterRequest) request;
         ProcessorContext processorContext = new ProcessorContext();
-        processorContext.putExtra("error", userRegisterRequest.getError());
+        if (userRegisterRequest.getError() != null) {
+            processorContext.putExtra("error", userRegisterRequest.getError());
+        }
         return processorContext;
     }
 
