@@ -1,39 +1,52 @@
 # component-processor
 
 #### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+https://blog.csdn.net/cml_blog/article/details/107434967
+https://blog.csdn.net/cml_blog/article/details/120856707
+之前两篇文章讲解了如何处理分布式一致性实现原理，都是在理论上对一致性的保障进行说明，本篇将基于之前的介绍完成流程引擎具体的实现，真正落地到代码上。
+这里将基于saga分布式事务实现原理，基于实际业务场景进行适配设计。
+
+processor:一个完整的业务流程定义，比如用户注册 
+
+flowTask:业务流程组成的节点，将业务流程拆分成多个节点，每个节点都是一个最小化业务单元
 
 #### 软件架构
 软件架构说明
+![alt 架构方案](https://img-blog.csdnimg.cn/6a9e6ff0830a4c8e961a163ab5548a20.jpeg#pic_center
+)
 
 
-#### 安装教程
+#### 如何使用
+1 注册processor和flowtask
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```java
+@Component
+@Configuration
+public class ProcessorConfiguration {
 
-#### 使用说明
+    @Bean
+    public FlowTaskHolder flowTaskHolder(List<FlowTask> flowTasks) {
+        FlowTaskHolder flowTaskHolder = new FlowTaskHolder();
+        flowTasks.forEach(flowTaskHolder::register);
+        return flowTaskHolder;
+    }
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+    @Bean
+    public ProcessorContainer processorContainer(List<FlowProcessor> flowProcessors) {
+        ProcessorContainer processorContainer = new ProcessorContainer();
+        flowProcessors.forEach(processorContainer::register);
+        return processorContainer;
+    }
 
 
-#### 特技
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+}
+```
+
+2 组装上下文，调用对应的processor
+
+```java
+    @Autowired
+    private ProcessorContainer processorContainer;
+    ProcessResult processResult = processorContainer.take(ProcessorTypeEnums.USER_REGISTER.type()).process(processorRequest);
+```
