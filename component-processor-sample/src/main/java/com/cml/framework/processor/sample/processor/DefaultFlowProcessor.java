@@ -2,6 +2,7 @@ package com.cml.framework.processor.sample.processor;
 
 import com.cml.framework.processor.core.flow.FlowTaskHolder;
 import com.cml.framework.processor.core.impl.TaskDrivenFlowProcessor;
+import com.cml.framework.processor.core.model.ProcessorTaskDomainModel;
 import com.cml.framework.processor.core.repository.ProcessorTaskModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,4 +22,13 @@ public abstract class DefaultFlowProcessor extends TaskDrivenFlowProcessor {
         this.setProcessorTaskModelRepository(processorTaskModelRepository);
     }
 
+    @Override
+    protected void tryLock(ProcessorTaskDomainModel taskDomainModel) {
+        super.tryLock(taskDomainModel);
+    }
+
+    @Override
+    protected void releaseLock(ProcessorTaskDomainModel taskDomainModel) {
+        super.releaseLock(taskDomainModel);
+    }
 }
