@@ -4,6 +4,7 @@ import com.cml.framework.processor.core.enums.ProcessorTypeEnums;
 import com.cml.framework.processor.core.flow.FlowTaskType;
 import com.cml.framework.processor.core.flowtask.enums.FlowTaskEnums;
 import com.cml.framework.processor.core.impl.TaskDrivenFlowProcessor;
+import com.cml.framework.processor.core.request.UserRegisterRequest;
 
 /**
  * @author ziyu
@@ -19,7 +20,10 @@ public class UserRegisterProcessor extends TaskDrivenFlowProcessor {
 
     @Override
     protected ProcessorContext buildContext(ProcessorRequest request) {
-        return new ProcessorContext();
+        UserRegisterRequest userRegisterRequest = (UserRegisterRequest) request;
+        ProcessorContext processorContext = new ProcessorContext();
+        processorContext.putExtra("error", userRegisterRequest.isError() ? "error" : null);
+        return processorContext;
     }
 
     @Override

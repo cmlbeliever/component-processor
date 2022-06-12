@@ -21,6 +21,11 @@ public class ProcessResult {
 
     private boolean waitReceipt;
 
+    /**
+     * 幂等返回
+     */
+    private boolean idempotent;
+
     private String errorCode;
 
     private String errorMsg;
@@ -29,6 +34,7 @@ public class ProcessResult {
      * 业务拓展参数，会存到db中
      */
     private Map<String, String> bizExtra = new HashMap<>();
+
 
     public static ProcessResult success(boolean waitReceipt) {
         ProcessResult processResult = new ProcessResult();

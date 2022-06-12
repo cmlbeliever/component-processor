@@ -5,6 +5,7 @@ import com.cml.framework.processor.core.ProcessorRequest;
 import com.cml.framework.processor.core.flow.FlowTaskType;
 import com.cml.framework.processor.sample.flowtask.enums.FlowTaskEnums;
 import com.cml.framework.processor.sample.processor.enums.ProcessorTypeEnums;
+import com.cml.framework.processor.sample.request.UserRegisterRequest;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,7 +23,10 @@ public class UserRegisterProcessor extends DefaultFlowProcessor {
 
     @Override
     protected ProcessorContext buildContext(ProcessorRequest request) {
-        return new ProcessorContext();
+        UserRegisterRequest userRegisterRequest = (UserRegisterRequest) request;
+        ProcessorContext processorContext = new ProcessorContext();
+        processorContext.putExtra("error", userRegisterRequest.getError());
+        return processorContext;
     }
 
     @Override

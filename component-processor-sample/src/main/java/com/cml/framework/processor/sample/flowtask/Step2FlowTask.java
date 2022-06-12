@@ -23,6 +23,13 @@ public class Step2FlowTask implements FlowTask {
     @Override
     public ProcessResult execute(ProcessorRequest request, ProcessorContext processorContext) {
         System.out.println("\tflowTask2 execute");
+        String error = processorContext.take("error");
+        if ("error".equals(error)) {
+            return ProcessResult.fail();
+        }
+        if ("retry".equals(error)) {
+            throw new IllegalArgumentException("可以重试的异常");
+        }
         return ProcessResult.success();
     }
 

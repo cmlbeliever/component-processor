@@ -21,6 +21,9 @@ public class Step2FlowTask implements FlowTask {
     @Override
     public ProcessResult execute(ProcessorRequest request, ProcessorContext processorContext) {
         System.out.println("\tflowTask2 execute");
+        if (processorContext.take("error") != null) {
+            throw new IllegalArgumentException("验证主动抛出异常");
+        }
         return ProcessResult.success();
     }
 

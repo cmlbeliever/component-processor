@@ -48,7 +48,9 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
 
         if (taskDomainModel.isFinish()) {
             // 幂等返回
-            return JSON.parseObject(taskDomainModel.takeExtra(FlowProcessorExtraKeys.RESULT.getKey()), ProcessResult.class);
+            ProcessResult result = JSON.parseObject(taskDomainModel.takeExtra(FlowProcessorExtraKeys.RESULT.getKey()), ProcessResult.class);
+            result.setIdempotent(true);
+            return result;
         }
 
         if (!taskDomainModel.canExecute()) {
@@ -115,7 +117,7 @@ public abstract class AbstractFlowProcessor<T> implements FlowProcessor {
             //上下文处理
             result = function.apply(processorContext);
         } catch (Exception e) {
-            log.error("",e);
+            log.error("", e);
             ex = e;
             throw e;
         } finally {
