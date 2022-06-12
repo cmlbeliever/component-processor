@@ -17,7 +17,70 @@ flowTask:业务流程组成的节点，将业务流程拆分成多个节点，�
 
 
 #### 如何使用
-1 注册processor和flowtask
+1 自定义processor,继承TaskDrivenFlowProcessor，sample这里做了个包装
+```java
+public abstract class DefaultFlowProcessor extends TaskDrivenFlowProcessor {
+
+    @Autowired
+    private FlowTaskHolder flowTaskHolder;
+
+    @Autowired
+    private ProcessorTaskModelRepository processorTaskModelRepository;
+
+    @PostConstruct
+    public void init() {
+        this.setFlowTaskHolder(flowTaskHolder);
+        this.setProcessorTaskModelRepository(processorTaskModelRepository);
+    }
+
+}
+
+@Component
+public class UserRegisterProcessor extends DefaultFlowProcessor {
+
+    @Override
+    public String processorType() {
+        return ProcessorTypeEnums.USER_REGISTER.type();
+    }
+
+    @Override
+    protected ProcessorContext buildContext(ProcessorRequest request) {
+        return new ProcessorContext();;
+    }
+
+    @Override
+    protected FlowTaskType[] flowTasks() {
+        return new FlowTaskType[]{
+                FlowTaskEnums.TASK_STEP1,
+                FlowTaskEnums.TASK_STEP2,
+                FlowTaskEnums.TASK_STEP3,
+                FlowTaskEnums.TASK_STEP4,
+        };
+    }
+}
+```
+
+2 自定义flowTask,实现接口:FlowTask
+```java
+@Component
+public class Step1FlowTask implements FlowTask {
+    @Override
+    public FlowTaskType taskType() {
+        return FlowTaskEnums.TASK_STEP1;
+    }
+
+    @Override
+    public ProcessResult execute(ProcessorRequest request, ProcessorContext processorContext) {
+        System.out.println("\tflowTask1 execute");
+        return ProcessResult.success();
+    }
+
+}
+
+
+```
+
+3 注册processor和flowTask
 
 ```java
 @Component
@@ -43,7 +106,7 @@ public class ProcessorConfiguration {
 }
 ```
 
-2 组装上下文，调用对应的processor
+4 组装上下文，调用对应的processor
 
 ```java
     @Autowired
